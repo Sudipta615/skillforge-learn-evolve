@@ -6,7 +6,9 @@ import { learningPaths } from "@/data/learningPaths";
 import { getTopicContent } from "@/data/topicContent";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
+import { useProgress } from "@/hooks/useProgress";
+import { toast } from "@/hooks/use-toast";
 
 const getLevelColor = (level: string) => {
   switch (level) {
@@ -23,9 +25,29 @@ const getLevelColor = (level: string) => {
 
 const TopicDetail = () => {
   const { topicId } = useParams<{ topicId: string }>();
+  const { isComplete, markComplete, markIncomplete } = useProgress();
   const topic = topics.find(t => t.id === topicId);
   const path = topic ? learningPaths.find(p => p.id === topic.learningPathId) : null;
   const content = topicId ? getTopicContent(topicId) : "";
+  const completed = topicId ? isComplete(topicId) : false;
+
+  const handleToggleComplete = () => {
+    if (!topicId) return;
+    
+    if (completed) {
+      markIncomplete(topicId);
+      toast({
+        title: "Progress updated",
+        description: "Topic marked as incomplete",
+      });
+    } else {
+      markComplete(topicId);
+      toast({
+        title: "Congratulations! 🎉",
+        description: "Topic marked as complete",
+      });
+    }
+  };
 
   if (!topic || !path) {
     return (
@@ -57,11 +79,33 @@ const TopicDetail = () => {
           </Button>
 
           <div className="mb-8">
-            <Badge className={`mb-4 ${getLevelColor(topic.level)}`}>
-              {topic.level}
-            </Badge>
-            <h1 className="mb-4 text-4xl font-bold text-foreground">{topic.title}</h1>
-            <p className="text-lg text-muted-foreground">{topic.description}</p>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex-1">
+                <Badge className={`mb-4 ${getLevelColor(topic.level)}`}>
+                  {topic.level}
+                </Badge>
+                <h1 className="mb-4 text-4xl font-bold text-foreground">{topic.title}</h1>
+                <p className="text-lg text-muted-foreground">{topic.description}</p>
+              </div>
+              <Button
+                onClick={handleToggleComplete}
+                variant={completed ? "secondary" : "default"}
+                size="lg"
+                className="shrink-0"
+              >
+                {completed ? (
+                  <>
+                    <CheckCircle2 className="mr-2 h-5 w-5" />
+                    Completed
+                  </>
+                ) : (
+                  <>
+                    <Circle className="mr-2 h-5 w-5" />
+                    Mark as Complete
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           <div 
