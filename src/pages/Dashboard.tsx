@@ -22,13 +22,13 @@ const Dashboard = () => {
       <Header />
       <main className="flex-1 py-12 bg-muted/30">
         <div className="container max-w-6xl">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Your Learning Dashboard</h1>
+          <div className="mb-8 animate-fade-in-up">
+            <h1 className="text-4xl font-bold text-foreground mb-2 gradient-text">Your Learning Dashboard</h1>
             <p className="text-lg text-muted-foreground">Track your progress and continue learning</p>
           </div>
 
           {/* Overall Progress Card */}
-          <Card className="mb-8 border-primary/20 bg-primary/5">
+          <Card className="mb-8 border-primary/20 bg-primary/5 hover-lift hover:glow-effect transition-all animate-scale-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-primary" />
@@ -41,7 +41,7 @@ const Dashboard = () => {
             <CardContent>
               <div className="space-y-2">
                 <Progress value={overallProgress} className="h-3" />
-                <p className="text-sm font-medium text-right">{overallProgress}%</p>
+                <p className="text-sm font-medium text-right gradient-text">{overallProgress}%</p>
               </div>
             </CardContent>
           </Card>
@@ -53,23 +53,24 @@ const Dashboard = () => {
               {learningPaths.map((path) => {
                 const pathProgress = getPathProgress(path.id, topics);
                 return (
-                  <Card key={path.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
+                  <Card key={path.id} className="hover-lift hover:border-primary hover:glow-effect transition-all animate-fade-in-up relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <CardHeader className="relative z-10">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="text-3xl">{path.icon}</div>
+                          <div className="text-3xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">{path.icon}</div>
                           <div>
-                            <CardTitle>{path.name}</CardTitle>
+                            <CardTitle className="group-hover:text-primary transition-colors">{path.name}</CardTitle>
                             <CardDescription className="mt-1">{path.description}</CardDescription>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 relative z-10">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Progress</span>
-                          <span className="font-medium">
+                          <span className="font-medium gradient-text">
                             {pathProgress.completed} / {pathProgress.total} topics
                           </span>
                         </div>
@@ -101,20 +102,21 @@ const Dashboard = () => {
                 {completedTopics.slice(-6).reverse().map((topic) => {
                   const path = learningPaths.find(p => p.id === topic.learningPathId);
                   return (
-                    <Card key={topic.id} className="hover:shadow-md transition-shadow">
-                      <CardHeader>
+                    <Card key={topic.id} className="hover-lift hover:border-success transition-all animate-scale-in group relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-success/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <CardHeader className="relative z-10">
                         <div className="flex items-start justify-between mb-2">
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-xs group-hover:scale-110 transition-transform">
                             {topic.level}
                           </Badge>
-                          <CheckCircle2 className="h-5 w-5 text-success" />
+                          <CheckCircle2 className="h-5 w-5 text-success group-hover:scale-110 transition-transform" />
                         </div>
-                        <CardTitle className="text-lg">{topic.title}</CardTitle>
+                        <CardTitle className="text-lg group-hover:text-success transition-colors">{topic.title}</CardTitle>
                         <CardDescription className="text-xs">
                           {path?.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="relative z-10">
                         <Button asChild variant="ghost" size="sm" className="w-full">
                           <Link to={`/topic/${topic.id}`}>
                             <BookOpen className="h-4 w-4 mr-2" />

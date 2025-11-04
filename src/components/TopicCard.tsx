@@ -23,17 +23,18 @@ const getLevelColor = (level: string) => {
 const TopicCard = ({ topic }: TopicCardProps) => {
   return (
     <Link to={`/topic/${topic.id}`}>
-      <Card className="group h-full transition-all hover:shadow-md hover:border-primary/50">
-        <CardHeader>
+      <Card className="group h-full hover-lift animate-scale-in transition-all hover:border-primary hover:glow-effect relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <CardHeader className="relative z-10">
           <div className="mb-2 flex items-center justify-between">
-            <Badge className={getLevelColor(topic.level)}>
+            <Badge className={`${getLevelColor(topic.level)} transition-transform group-hover:scale-110`}>
               {topic.level}
             </Badge>
           </div>
-          <CardTitle className="text-xl group-hover:text-primary transition-colors">
+          <CardTitle className="text-xl group-hover:text-primary transition-all duration-300 group-hover:translate-x-1">
             {topic.title}
           </CardTitle>
-          <CardDescription>{topic.description}</CardDescription>
+          <CardDescription className="group-hover:text-foreground/80 transition-colors">{topic.description}</CardDescription>
         </CardHeader>
       </Card>
     </Link>
