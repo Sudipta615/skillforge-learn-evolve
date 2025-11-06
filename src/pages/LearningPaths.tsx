@@ -7,7 +7,7 @@ const LearningPaths = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8"> {/* Consistent padding with other pages */}
         <div className="container">
           <div className="mb-12">
             <h1 className="mb-4 text-4xl font-bold text-foreground">Learning Paths</h1>

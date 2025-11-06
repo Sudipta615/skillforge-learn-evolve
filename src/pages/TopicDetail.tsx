@@ -78,7 +78,7 @@ const TopicDetail = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8"> {/* Adjusted padding for consistency */}
         <article className="container max-w-4xl">
           <Button asChild variant="ghost" className="mb-6">
             <Link to={`/paths/${path.id}`}>
