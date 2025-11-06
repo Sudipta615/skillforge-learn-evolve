@@ -3,12 +3,18 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { topics } from "@/data/topics";
 import { learningPaths } from "@/data/learningPaths";
-import { getTopicContent } from "@/data/topicContent";
+// import { getTopicContent } from "@/data/topicContent";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
 import { useProgress } from "@/hooks/useProgress";
 import { toast } from "@/hooks/use-toast";
+// New imports for Markdown rendering
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+import { useTopicContent } from "@/hooks/useTopicContent";
 
 const getLevelColor = (level: string) => {
   switch (level) {
@@ -26,9 +32,12 @@ const getLevelColor = (level: string) => {
 const TopicDetail = () => {
   const { topicId } = useParams<{ topicId: string }>();
   const { isComplete, markComplete, markIncomplete } = useProgress();
+  
+  // Use our new hook to fetch content dynamically
+  const { content, isLoading, error } = useTopicContent(topicId);
+
   const topic = topics.find(t => t.id === topicId);
   const path = topic ? learningPaths.find(p => p.id === topic.learningPathId) : null;
-  const content = topicId ? getTopicContent(topicId) : "";
   const completed = topicId ? isComplete(topicId) : false;
 
   const handleToggleComplete = () => {
@@ -108,32 +117,54 @@ const TopicDetail = () => {
             </div>
           </div>
 
-          <div 
-            className="prose prose-lg dark:prose-invert max-w-none
-              prose-headings:font-bold prose-headings:text-foreground
-              prose-h1:text-4xl prose-h1:mb-8 prose-h1:mt-0
-              prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-border prose-h2:pb-3
-              prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-              prose-p:text-foreground prose-p:leading-relaxed
-              prose-li:text-foreground prose-li:marker:text-primary
-              prose-strong:text-foreground prose-strong:font-semibold
-              prose-code:text-primary prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-              prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8
-              [&_.content-image]:my-8 [&_.content-image]:flex [&_.content-image]:justify-center
-              [&_.content-image_img]:rounded-xl [&_.content-image_img]:shadow-lg [&_.content-image_img]:border [&_.content-image_img]:border-border
-              [&_.benefits-grid]:grid [&_.benefits-grid]:grid-cols-1 [&_.benefits-grid]:sm:grid-cols-2 [&_.benefits-grid]:gap-6 [&_.benefits-grid]:my-8 [&_.benefits-grid]:not-prose
-              [&_.benefit-card]:p-6 [&_.benefit-card]:rounded-lg [&_.benefit-card]:border [&_.benefit-card]:border-border [&_.benefit-card]:bg-card
-              [&_.benefit-card_h3]:text-lg [&_.benefit-card_h3]:font-semibold [&_.benefit-card_h3]:mb-2 [&_.benefit-card_h3]:mt-0 [&_.benefit-card_h3]:text-foreground
-              [&_.benefit-card_p]:text-sm [&_.benefit-card_p]:text-muted-foreground [&_.benefit-card_p]:m-0
-              [&_.step-card]:my-8 [&_.step-card]:p-8 [&_.step-card]:rounded-xl [&_.step-card]:border [&_.step-card]:border-border [&_.step-card]:bg-muted/30 [&_.step-card]:not-prose
-              [&_.step-card_h3]:text-2xl [&_.step-card_h3]:font-bold [&_.step-card_h3]:mb-4 [&_.step-card_h3]:mt-0 [&_.step-card_h3]:text-foreground
-              [&_.step-card_p]:text-foreground [&_.step-card_p]:mb-4
-              [&_.step-card_ol]:space-y-3 [&_.step-card_ol]:text-foreground
-              [&_.step-card_li]:text-foreground
-              [&_.next-steps]:mt-12 [&_.next-steps]:p-8 [&_.next-steps]:rounded-xl [&_.next-steps]:border-2 [&_.next-steps]:border-primary/20 [&_.next-steps]:bg-primary/5
-            "
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          {isLoading ? (
+            // A simple loading skeleton while the markdown file is fetched
+            <div className="space-y-4">
+               <Skeleton className="h-8 w-3/4" />
+               <Skeleton className="h-4 w-full" />
+               <Skeleton className="h-4 w-full" />
+               <Skeleton className="h-4 w-2/3" />
+               <div className="grid grid-cols-2 gap-4 mt-8">
+                 <Skeleton className="h-40 w-full" />
+                 <Skeleton className="h-40 w-full" />
+               </div>
+            </div>
+          ) : (
+            /* ReactMarkdown replaces dangerouslySetInnerHTML. 
+               rehypeRaw is vital here: it allows your existing HTML classes 
+               (like 'benefit-card') to still work even though it's a .md file.
+            */
+            <div 
+              className="prose prose-lg dark:prose-invert max-w-none
+                prose-headings:font-bold prose-headings:text-foreground
+                prose-h1:text-4xl prose-h1:mb-8 prose-h1:mt-0
+                prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:border-border prose-h2:pb-3
+                prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+                prose-p:text-foreground prose-p:leading-relaxed
+                prose-li:text-foreground prose-li:marker:text-primary
+                prose-strong:text-foreground prose-strong:font-semibold
+                prose-code:text-primary prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8
+                [&_.content-image]:my-8 [&_.content-image]:flex [&_.content-image]:justify-center
+                [&_.content-image_img]:rounded-xl [&_.content-image_img]:shadow-lg [&_.content-image_img]:border [&_.content-image_img]:border-border
+                [&_.benefits-grid]:grid [&_.benefits-grid]:grid-cols-1 [&_.benefits-grid]:sm:grid-cols-2 [&_.benefits-grid]:gap-6 [&_.benefits-grid]:my-8 [&_.benefits-grid]:not-prose
+                [&_.benefit-card]:p-6 [&_.benefit-card]:rounded-lg [&_.benefit-card]:border [&_.benefit-card]:border-border [&_.benefit-card]:bg-card
+                [&_.benefit-card_h3]:text-lg [&_.benefit-card_h3]:font-semibold [&_.benefit-card_h3]:mb-2 [&_.benefit-card_h3]:mt-0 [&_.benefit-card_h3]:text-foreground
+                [&_.benefit-card_p]:text-sm [&_.benefit-card_p]:text-muted-foreground [&_.benefit-card_p]:m-0
+                [&_.step-card]:my-8 [&_.step-card]:p-8 [&_.step-card]:rounded-xl [&_.step-card]:border [&_.step-card]:border-border [&_.step-card]:bg-muted/30 [&_.step-card]:not-prose
+                [&_.step-card_h3]:text-2xl [&_.step-card_h3]:font-bold [&_.step-card_h3]:mb-4 [&_.step-card_h3]:mt-0 [&_.step-card_h3]:text-foreground
+                [&_.step-card_p]:text-foreground [&_.step-card_p]:mb-4
+                [&_.step-card_ol]:space-y-3 [&_.step-card_ol]:text-foreground
+                [&_.step-card_li]:text-foreground
+                [&_.next-steps]:mt-12 [&_.next-steps]:p-8 [&_.next-steps]:rounded-xl [&_.next-steps]:border-2 [&_.next-steps]:border-primary/20 [&_.next-steps]:bg-primary/5"
+            >
+              <ReactMarkdown 
+                rehypePlugins={[rehypeRaw, remarkGfm]}
+              >
+                {content}
+              </ReactMarkdown>
+            </div>
+          )}
         </article>
       </main>
       <Footer />
