@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Eye, EyeOff } from "lucide-react";
+import { GraduationCap, Eye, EyeOff, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
@@ -79,6 +79,14 @@ const Auth = () => {
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       
       <Card className="w-full max-w-md relative animate-fade-in-up border-border/50 shadow-elegant hover-lift">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 rounded-full"
+          onClick={() => navigate(-1)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
         <CardHeader className="space-y-2 text-center">
           <Link to="/" className="flex items-center justify-center space-x-2 mb-4">
             <GraduationCap className="h-8 w-8 text-primary animate-float" />
