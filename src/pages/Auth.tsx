@@ -4,29 +4,72 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { GraduationCap, Eye, EyeOff, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const [isLogin, setIsLogin] = useState((location.state as any)?.mode !== 'signup');
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState(0);
   const [loading, setLoading] = useState(false);
   
   const { login, signup } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const from = (location.state as any)?.from?.pathname || "/";
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const checkPasswordStrength = (pass: string) => {
+    let score = 0;
+    if (pass.length >= 8 && pass.length <= 30) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[a-z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+    return (score / 5) * 100;
+  };
+
+  const getPasswordStrengthLabel = (strength: number) => {
+    if (strength === 0) return "Enter a password";
+    if (strength <= 40) return "Weak";
+    if (strength <= 80) return "Medium";
+    return "Strong";
+  };
+
+  const getStrengthColor = (strength: number) => {
+    if (strength <= 40) return "bg-destructive";
+    if (strength <= 80) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPass = e.target.value;
+    setPassword(newPass);
+    setPasswordStrength(checkPasswordStrength(newPass));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address (e.g., user@example.com).",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -54,6 +97,27 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+
+        if (password.length < 8 || password.length > 30) {
+          toast({
+            title: "Invalid password",
+            description: "Password must be between 8 and 30 characters long.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (passwordStrength < 60) {
+             toast({
+               title: "Weak password",
+               description: "Please choose a stronger password with numbers and mixed case letters.",
+               variant: "destructive",
+             });
+             setLoading(false);
+             return;
+        }
+
         const result = await signup(username, email, password);
         if (result.success) {
           toast({
@@ -83,7 +147,7 @@ const Auth = () => {
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4 rounded-full"
-          onClick={() => navigate("/paths")}
+          onClick={() => navigate(-1)}
         >
           <X className="h-4 w-4" />
         </Button>
@@ -137,7 +201,7 @@ const Auth = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   required
                   className="pr-10"
                 />
@@ -155,6 +219,17 @@ const Auth = () => {
                   )}
                 </Button>
               </div>
+              {!isLogin && password && (
+                <div className="space-y-1.5 pt-1">
+                  <Progress 
+                    value={passwordStrength} 
+                    className={`h-1.5 ${getStrengthColor(passwordStrength)}`}
+                  />
+                  <p className="text-xs text-muted-foreground text-right">
+                    Strength: <span className="font-medium">{getPasswordStrengthLabel(passwordStrength)}</span>
+                  </p>
+                </div>
+              )}
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
@@ -174,6 +249,7 @@ const Auth = () => {
                 setUsername("");
                 setEmail("");
                 setPassword("");
+                setPasswordStrength(0);
               }}
               className="text-primary hover:underline font-medium"
             >

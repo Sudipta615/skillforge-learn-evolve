@@ -28,10 +28,10 @@ const Header = () => {
           {!isAuthenticated ? (
             <>
               <Button asChild variant="outline" size="sm">
-                <Link to="/auth">Sign In</Link>
+                <Link to="/auth" state={{ mode: "login" }}>Sign In</Link>
               </Button>
               <Button asChild variant="default" size="sm">
-                <Link to="/auth">Sign Up</Link>
+                <Link to="/auth" state={{ mode: "signup" }}>Sign Up</Link>
               </Button>
             </>
           ) : null}
