@@ -1,11 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Moon, Sun, LayoutDashboard } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/hooks/useAuth";
+import UserAvatar from "./UserAvatar";
 
 const Header = () => {
-  const location = useLocation();
   const { theme, setTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -23,9 +25,16 @@ const Header = () => {
             </Link>
           </Button>
           
-          <Button asChild variant="default" size="sm">
-            <Link to="/paths">Start Learning</Link>
-          </Button>
+          {!isAuthenticated ? (
+            <>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/auth">Sign In</Link>
+              </Button>
+              <Button asChild variant="default" size="sm">
+                <Link to="/auth">Sign Up</Link>
+              </Button>
+            </>
+          ) : null}
 
           <Button
             variant="ghost"
@@ -36,6 +45,8 @@ const Header = () => {
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
           </Button>
+
+          {isAuthenticated && <UserAvatar />}
         </nav>
       </div>
     </header>

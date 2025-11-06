@@ -6,12 +6,20 @@ interface Progress {
 
 export const useProgress = () => {
   const [progress, setProgress] = useState<Progress>(() => {
-    const saved = localStorage.getItem('skillforge-progress');
+    const savedUser = localStorage.getItem('skillforge-user');
+    if (!savedUser) return {};
+    
+    const user = JSON.parse(savedUser);
+    const saved = localStorage.getItem(`skillforge-progress-${user.id}`);
     return saved ? JSON.parse(saved) : {};
   });
 
   useEffect(() => {
-    localStorage.setItem('skillforge-progress', JSON.stringify(progress));
+    const savedUser = localStorage.getItem('skillforge-user');
+    if (!savedUser) return;
+    
+    const user = JSON.parse(savedUser);
+    localStorage.setItem(`skillforge-progress-${user.id}`, JSON.stringify(progress));
   }, [progress]);
 
   const markComplete = (topicId: string) => {
