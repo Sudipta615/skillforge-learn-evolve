@@ -83,7 +83,7 @@ const Auth = () => {
           variant="ghost"
           size="icon"
           className="absolute right-4 top-4 rounded-full"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/paths")}
         >
           <X className="h-4 w-4" />
         </Button>
