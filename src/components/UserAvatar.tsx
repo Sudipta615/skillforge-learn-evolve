@@ -35,7 +35,7 @@ const UserAvatar = () => {
       <DropdownMenuTrigger asChild>
         <button className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full">
           <Avatar className="h-9 w-9 cursor-pointer hover-lift border-2 border-primary/20 hover:border-primary transition-all duration-300">
-            <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
+            <AvatarFallback className="bg-gradient-primary text-bg-primary font-semibold">
               {initial}
             </AvatarFallback>
           </Avatar>

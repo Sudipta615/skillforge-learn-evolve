@@ -3,11 +3,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { topics } from "@/data/topics";
 import { learningPaths } from "@/data/learningPaths";
-// import { getTopicContent } from "@/data/topicContent";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CheckCircle2, Circle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Bookmark } from "lucide-react";
 import { useProgress } from "@/hooks/useProgress";
 import { toast } from "@/hooks/use-toast";
 // New imports for Markdown rendering
@@ -15,6 +14,18 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { useTopicContent } from "@/hooks/useTopicContent";
+import { quizzes } from "@/data/quizzes"; // Import quizzes data
+import Quiz from "@/components/Quiz";     // Import Quiz component
+import { useBookmarks } from "@/hooks/useBookmarks"; // Import hook
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { useStreak } from "@/hooks/useStreak";
 
 const getLevelColor = (level: string) => {
   switch (level) {
@@ -39,6 +50,22 @@ const TopicDetail = () => {
   const topic = topics.find(t => t.id === topicId);
   const path = topic ? learningPaths.find(p => p.id === topic.learningPathId) : null;
   const completed = topicId ? isComplete(topicId) : false;
+  // for quiz
+  const currentQuiz = quizzes.find(q => q.topicId === topicId);
+  // for bookmarks
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = topicId ? isBookmarked(topicId) : false;
+  // for streaks
+  const { updateStreak } = useStreak();
+  
+  const handleToggleBookmark = () => {
+      if (!topicId) return;
+      toggleBookmark(topicId);
+      toast({
+          title: bookmarked ? "Bookmark removed" : "Topic bookmarked",
+          description: bookmarked ? "Removed from your saved topics." : "Saved for later reading.",
+      })
+  }
 
   const handleToggleComplete = () => {
     if (!topicId) return;
@@ -80,6 +107,25 @@ const TopicDetail = () => {
       <Header />
       <main className="flex-1 py-8"> {/* Adjusted padding for consistency */}
         <article className="container max-w-4xl">
+            <Breadcrumb className="mb-6">
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link to="/paths">Learning Paths</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link to={`/paths/${path.id}`}>{path.name}</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>{topic.title}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
           <Button asChild variant="ghost" className="mb-6">
             <Link to={`/paths/${path.id}`}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -95,6 +141,18 @@ const TopicDetail = () => {
                 </Badge>
                 <h1 className="mb-4 text-4xl font-bold text-foreground">{topic.title}</h1>
                 <p className="text-lg text-muted-foreground">{topic.description}</p>
+              </div>
+              {/* added Bookmark button */}
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                    onClick={handleToggleBookmark}
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                    title={bookmarked ? "Remove Bookmark" : "Bookmark this topic"}
+                >
+                    <Bookmark className={`h-5 w-5 ${bookmarked ? "fill-primary text-primary" : ""}`} />
+                </Button>
               </div>
               <Button
                 onClick={handleToggleComplete}
@@ -124,7 +182,7 @@ const TopicDetail = () => {
                <Skeleton className="h-4 w-full" />
                <Skeleton className="h-4 w-full" />
                <Skeleton className="h-4 w-2/3" />
-               <div className="grid grid-cols-2 gap-4 mt-8">
+               <div className="grid grid-cols-2 gap-4 mt-8 space-y-4"> {/* Added a grid for better skeleton layout */}
                  <Skeleton className="h-40 w-full" />
                  <Skeleton className="h-40 w-full" />
                </div>
@@ -163,8 +221,10 @@ const TopicDetail = () => {
               >
                 {content}
               </ReactMarkdown>
+              {/* Render Quiz if it exists for this topic */}
+              {currentQuiz && (<Quiz quiz={currentQuiz} onComplete={() => !completed && markComplete(topicId!)} />)}
             </div>
-          )}
+          )}    
         </article>
       </main>
       <Footer />

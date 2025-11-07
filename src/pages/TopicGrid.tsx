@@ -7,6 +7,14 @@ import { learningPaths } from "@/data/learningPaths";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const TopicGrid = () => {
   const { pathId } = useParams<{ pathId: string }>();
@@ -39,6 +47,26 @@ const TopicGrid = () => {
       <Header />
       <main className="flex-1 py-8"> {/* Consistent padding with other pages */}
         <div className="container">
+            {/* Breadcrumbs */}
+            <Breadcrumb className="mb-6">
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link to="/">Home</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link to="/paths">Learning Paths</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>{path.name}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
           <Button asChild variant="ghost" className="mb-6">
             <Link to="/paths">
               <ArrowLeft className="mr-2 h-4 w-4" />
