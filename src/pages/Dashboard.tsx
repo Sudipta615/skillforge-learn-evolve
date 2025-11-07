@@ -13,22 +13,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, TrendingUp, Brain, Trophy, Target, BookOpen } from "lucide-react";
 import TopicCard from "@/components/TopicCard";
-
 const Dashboard = () => {
   const [showBookmarks, setShowBookmarks] = useState(false);
-  const { progress, getPathProgress, isComplete } = useProgress();
-  const { bookmarks } = useBookmarks();
-  const { getAllCompletedQuizzes, getAverageScore } = useQuizProgress();
-  
+  const {
+    progress,
+    getPathProgress,
+    isComplete
+  } = useProgress();
+  const {
+    bookmarks
+  } = useBookmarks();
+  const {
+    getAllCompletedQuizzes,
+    getAverageScore
+  } = useQuizProgress();
   const completedTopics = topics.filter(t => progress[t.id]);
   const bookmarkedTopics = topics.filter(t => bookmarks[t.id]);
   const totalTopics = topics.length;
-  const overallProgress = totalTopics > 0 ? Math.round((completedTopics.length / totalTopics) * 100) : 0;
+  const overallProgress = totalTopics > 0 ? Math.round(completedTopics.length / totalTopics * 100) : 0;
   const completedQuizzes = getAllCompletedQuizzes();
   const averageScore = getAverageScore();
-
-  return (
-    <div className="flex min-h-screen flex-col">
+  return <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1 py-12 bg-muted/30">
         <div className="container max-w-6xl">
@@ -37,31 +42,21 @@ const Dashboard = () => {
               <h1 className="text-4xl font-bold text-foreground mb-2 gradient-text">Your Learning Dashboard</h1>
               <p className="text-lg text-muted-foreground">Track your progress and continue learning</p>
             </div>
-            <Button 
-              variant={showBookmarks ? "default" : "outline"} 
-              onClick={() => setShowBookmarks(!showBookmarks)}
-              className="flex items-center gap-2"
-            >
+            <Button variant={showBookmarks ? "default" : "outline"} onClick={() => setShowBookmarks(!showBookmarks)} className="flex items-center gap-2">
               <Bookmark className={`h-4 w-4 ${showBookmarks ? 'fill-current' : ''}`} />
               {showBookmarks ? 'Hide' : 'Show'} Bookmarks
             </Button>
           </div>
 
           {/* Bookmarks Section */}
-          {showBookmarks && (
-            <div className="mb-8">
+          {showBookmarks && <div className="mb-8">
               <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Bookmark className="h-6 w-6 text-primary fill-primary" />
                 Bookmarked Topics
               </h2>
-              {bookmarkedTopics.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {bookmarkedTopics.map((topic) => (
-                    <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
-                  ))}
-                </div>
-              ) : (
-                <Card className="text-center py-8">
+              {bookmarkedTopics.length > 0 ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {bookmarkedTopics.map(topic => <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />)}
+                </div> : <Card className="text-center py-8">
                   <CardContent>
                     <Bookmark className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                     <h3 className="text-lg font-semibold mb-2">No Bookmarks Yet</h3>
@@ -69,10 +64,8 @@ const Dashboard = () => {
                       Bookmark topics while learning to save them for later
                     </p>
                   </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
+                </Card>}
+            </div>}
 
           {/* Overall Progress Card */}
           <Card className="mb-8 border-primary/20 bg-primary/5 hover-lift hover:glow-effect transition-all animate-scale-in">
@@ -97,10 +90,9 @@ const Dashboard = () => {
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground mb-4">Learning Paths</h2>
             <div className="grid gap-6 md:grid-cols-2">
-              {learningPaths.map((path) => {
-                const pathProgress = getPathProgress(path.id, topics);
-                return (
-                  <Card key={path.id} className="hover-lift hover:border-primary hover:glow-effect transition-all animate-fade-in-up relative overflow-hidden group">
+              {learningPaths.map(path => {
+              const pathProgress = getPathProgress(path.id, topics);
+              return <Card key={path.id} className="hover-lift hover:border-primary hover:glow-effect transition-all animate-fade-in-up relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <CardHeader className="relative z-10">
                       <div className="flex items-start justify-between">
@@ -132,63 +124,15 @@ const Dashboard = () => {
                         </Link>
                       </Button>
                     </CardContent>
-                  </Card>
-                );
-              })}
+                  </Card>;
+            })}
             </div>
           </div>
 
           {/* Quiz Analytics */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Brain className="h-6 w-6 text-primary" />
-              Quiz Performance
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card className="border-primary/20 bg-primary/5">
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Target className="h-4 w-4 text-primary" />
-                    Quizzes Completed
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{completedQuizzes.length}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Total attempts</p>
-                </CardContent>
-              </Card>
+          
 
-              <Card className="border-amber-500/20 bg-amber-500/5">
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
-                    <Trophy className="h-4 w-4 text-amber-500" />
-                    Average Score
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{averageScore}%</div>
-                  <p className="text-xs text-muted-foreground mt-1">Across all quizzes</p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover-lift transition-all border-primary/20">
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Practice More</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild variant="default" className="w-full">
-                    <Link to="/practice">
-                      <Brain className="h-4 w-4 mr-2" />
-                      Go to Practice
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {completedTopics.length === 0 && (
-            <Card className="text-center py-12">
+          {completedTopics.length === 0 && <Card className="text-center py-12">
               <CardContent>
                 <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-xl font-semibold mb-2">Start Your Learning Journey</h3>
@@ -199,13 +143,10 @@ const Dashboard = () => {
                   <Link to="/paths">Browse Learning Paths</Link>
                 </Button>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
