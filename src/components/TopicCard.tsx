@@ -2,9 +2,11 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Badge } from "@/components/ui/badge";
 import { Topic } from "@/data/topics";
 import { Link } from "react-router-dom";
+import { CheckCircle2 } from "lucide-react";
 
 interface TopicCardProps {
   topic: Topic;
+  isCompleted?: boolean;
 }
 
 const getLevelColor = (level: string) => {
@@ -20,18 +22,19 @@ const getLevelColor = (level: string) => {
   }
 };
 
-const TopicCard = ({ topic }: TopicCardProps) => {
+const TopicCard = ({ topic, isCompleted = false }: TopicCardProps) => {
   return (
     <Link to={`/topic/${topic.id}`}>
-      {/* Removed hover:glow-effect */}
       <Card className="group h-full hover-lift animate-scale-in transition-all hover:border-primary relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <CardHeader className="relative z-10">
           <div className="mb-2 flex items-center justify-between">
-            {/* Removed group-hover:scale-110 from Badge */}
             <Badge className={`${getLevelColor(topic.level)} transition-colors`}>
               {topic.level}
             </Badge>
+            {isCompleted && (
+              <CheckCircle2 className="h-5 w-5 text-success" />
+            )}
           </div>
           <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
             {topic.title}

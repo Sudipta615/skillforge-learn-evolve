@@ -6,7 +6,7 @@ import { learningPaths } from "@/data/learningPaths";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, CheckCircle2, Circle, Bookmark } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Bookmark, Brain } from "lucide-react";
 import { useProgress } from "@/hooks/useProgress";
 import { toast } from "@/hooks/use-toast";
 // New imports for Markdown rendering
@@ -14,9 +14,8 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { useTopicContent } from "@/hooks/useTopicContent";
-import { quizzes } from "@/data/quizzes"; // Import quizzes data
-import Quiz from "@/components/Quiz";     // Import Quiz component
-import { useBookmarks } from "@/hooks/useBookmarks"; // Import hook
+import { quizzes } from "@/data/quizzes";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -50,13 +49,9 @@ const TopicDetail = () => {
   const topic = topics.find(t => t.id === topicId);
   const path = topic ? learningPaths.find(p => p.id === topic.learningPathId) : null;
   const completed = topicId ? isComplete(topicId) : false;
-  // for quiz
-  const currentQuiz = quizzes.find(q => q.topicId === topicId);
-  // for bookmarks
+  const hasQuiz = quizzes.find(q => q.topicId === topicId);
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const bookmarked = topicId ? isBookmarked(topicId) : false;
-  // for streaks
-  const { updateStreak } = useStreak();
   
   const handleToggleBookmark = () => {
       if (!topicId) return;
@@ -221,8 +216,25 @@ const TopicDetail = () => {
               >
                 {content}
               </ReactMarkdown>
-              {/* Render Quiz if it exists for this topic */}
-              {currentQuiz && (<Quiz quiz={currentQuiz} onComplete={() => !completed && markComplete(topicId!)} />)}
+              
+              {/* Practice Quiz Link */}
+              {hasQuiz && (
+                <div className="mt-12 p-8 rounded-xl border-2 border-primary/20 bg-primary/5">
+                  <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                    <Brain className="h-6 w-6 text-primary" />
+                    Ready to test your knowledge?
+                  </h3>
+                  <p className="text-muted-foreground mb-6">
+                    Take the quiz for this topic to reinforce your learning and track your progress.
+                  </p>
+                  <Button asChild size="lg">
+                    <Link to="/practice">
+                      <Brain className="h-5 w-5 mr-2" />
+                      Go to Practice
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           )}    
         </article>

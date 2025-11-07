@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Moon, Sun, LayoutDashboard, Flame } from "lucide-react";
+import { GraduationCap, Moon, Sun, LayoutDashboard, Flame, Brain } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/useAuth";
 import UserAvatar from "./UserAvatar";
@@ -51,11 +51,19 @@ const Header = () => {
               </Tooltip>
           )}
 
-          {/* Dashboard Link (hidden on very small mobile to save space) */}
+           {/* Dashboard Link (hidden on very small mobile to save space) */}
           <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
             <Link to="/dashboard">
               <LayoutDashboard className="h-4 w-4 mr-2" />
               Dashboard
+            </Link>
+          </Button>
+
+          {/* Practice Link */}
+          <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
+            <Link to="/practice">
+              <Brain className="h-4 w-4 mr-2" />
+              Practice
             </Link>
           </Button>
           

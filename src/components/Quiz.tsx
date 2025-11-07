@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 
 interface QuizProps {
   quiz: QuizType;
-  onComplete?: () => void;
+  onComplete?: (score: number) => void;
 }
 
 const Quiz = ({ quiz, onComplete }: QuizProps) => {
@@ -36,8 +36,9 @@ const Quiz = ({ quiz, onComplete }: QuizProps) => {
       setSelectedAnswer(null);
       setIsAnswerChecked(false);
     } else {
+      const percentage = Math.round((score / quiz.questions.length) * 100);
       setQuizCompleted(true);
-      if (onComplete) onComplete();
+      if (onComplete) onComplete(percentage);
     }
   };
 

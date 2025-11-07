@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import TopicCard from "@/components/TopicCard";
 import { topics } from "@/data/topics";
 import { learningPaths } from "@/data/learningPaths";
+import { useProgress } from "@/hooks/useProgress";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +19,7 @@ import {
 
 const TopicGrid = () => {
   const { pathId } = useParams<{ pathId: string }>();
+  const { isComplete } = useProgress();
   const path = learningPaths.find(p => p.id === pathId);
   const pathTopics = topics.filter(t => t.learningPathId === pathId);
   
@@ -97,7 +99,7 @@ const TopicGrid = () => {
                     <h2 className="mb-6 text-2xl font-bold text-foreground">Beginner</h2>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                       {beginnerTopics.map(topic => (
-                        <TopicCard key={topic.id} topic={topic} />
+                        <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                       ))}
                     </div>
                   </div>
@@ -108,7 +110,7 @@ const TopicGrid = () => {
                     <h2 className="mb-6 text-2xl font-bold text-foreground">Intermediate</h2>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                       {intermediateTopics.map(topic => (
-                        <TopicCard key={topic.id} topic={topic} />
+                        <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                       ))}
                     </div>
                   </div>
@@ -119,7 +121,7 @@ const TopicGrid = () => {
                     <h2 className="mb-6 text-2xl font-bold text-foreground">Advanced</h2>
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                       {advancedTopics.map(topic => (
-                        <TopicCard key={topic.id} topic={topic} />
+                        <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                       ))}
                     </div>
                   </div>
@@ -130,7 +132,7 @@ const TopicGrid = () => {
             <TabsContent value="beginner" className="mt-0">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {beginnerTopics.map(topic => (
-                  <TopicCard key={topic.id} topic={topic} />
+                  <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                 ))}
               </div>
             </TabsContent>
@@ -138,7 +140,7 @@ const TopicGrid = () => {
             <TabsContent value="intermediate" className="mt-0">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {intermediateTopics.map(topic => (
-                  <TopicCard key={topic.id} topic={topic} />
+                  <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                 ))}
               </div>
             </TabsContent>
@@ -146,7 +148,7 @@ const TopicGrid = () => {
             <TabsContent value="advanced" className="mt-0">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {advancedTopics.map(topic => (
-                  <TopicCard key={topic.id} topic={topic} />
+                  <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />
                 ))}
               </div>
             </TabsContent>
