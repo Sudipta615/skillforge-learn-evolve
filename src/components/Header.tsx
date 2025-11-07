@@ -51,19 +51,19 @@ const Header = () => {
               </Tooltip>
           )}
 
-           {/* Practice Link */}
-          <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
-            <Link to="/practice">
-              <Brain className="h-4 w-4 mr-2" />
-              Practice
-            </Link>
-          </Button>
-
-          {/* Dashboard Link (hidden on very small mobile to save space) */}
+           {/* Dashboard Link (hidden on very small mobile to save space) */}
           <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
             <Link to="/dashboard">
               <LayoutDashboard className="h-4 w-4 mr-2" />
               Dashboard
+            </Link>
+          </Button>
+
+          {/* Practice Link */}
+          <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
+            <Link to="/practice">
+              <Brain className="h-4 w-4 mr-2" />
+              Practice
             </Link>
           </Button>
           

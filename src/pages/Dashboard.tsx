@@ -54,7 +54,7 @@ const Dashboard = () => {
                 <Bookmark className="h-6 w-6 text-primary fill-primary" />
                 Bookmarked Topics
               </h2>
-              {bookmarkedTopics.length > 0 ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {bookmarkedTopics.length > 0 ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   {bookmarkedTopics.map(topic => <TopicCard key={topic.id} topic={topic} isCompleted={isComplete(topic.id)} />)}
                 </div> : <Card className="text-center py-8">
                   <CardContent>
