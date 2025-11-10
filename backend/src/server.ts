@@ -18,9 +18,8 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse JSON bodies
 
 // API Routes
-// Add the /api prefix back!
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userDataRoutes);
 
-// Export the app for Vercel
+// DO NOT listen here. Instead, export the app for Vercel.
 export default app;
