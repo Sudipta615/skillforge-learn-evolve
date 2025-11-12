@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
+import { API_URL } from "../config"; // Import the config
 
 interface StreakData {
     count: number;
@@ -7,7 +8,7 @@ interface StreakData {
 }
 
 // Helper function to get the token
-const getToken = () => localStorage.getItem('skillforge-token');
+const getToken = () => localStorage.getItem('edvancea-token');
 
 export const useStreak = () => {
     const [streak, setStreak] = useState<StreakData>({ count: 0, lastCompletedDate: null });
@@ -19,7 +20,7 @@ export const useStreak = () => {
             if (isAuthenticated) {
                 try {
                     const token = getToken();
-                    const res = await fetch('/api/user/streak', {
+                    const res = await fetch(`${API_URL}/user/streak`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (res.ok) {

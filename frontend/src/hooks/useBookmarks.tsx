@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
+import { API_URL } from "../config"; // Import the config
 
 interface Bookmarks {
   [topicId: string]: boolean;
 }
 
 // Helper function to get the token
-const getToken = () => localStorage.getItem('skillforge-token');
+const getToken = () => localStorage.getItem('edvancea-token');
 
 export const useBookmarks = () => {
   const [bookmarks, setBookmarks] = useState<Bookmarks>({});
@@ -18,7 +19,7 @@ export const useBookmarks = () => {
       if (isAuthenticated) {
         try {
           const token = getToken();
-          const res = await fetch('/api/user/bookmarks', {
+          const res = await fetch(`${API_URL}/user/bookmarks`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {

@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { API_URL } from "../config"; // Import the config
 
 interface User {
   _id: string; // Changed from id to _id to match MongoDB
@@ -18,7 +19,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Helper function to get the token
-const getToken = () => localStorage.getItem('skillforge-token');
+const getToken = () => localStorage.getItem('edvancea-token');
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = getToken();
       if (token) {
         try {
-          const res = await fetch('/api/auth/me', {
+          const res = await fetch(`${API_URL}/auth/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -41,11 +42,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(userData);
           } else {
             // Token is invalid or expired
-            localStorage.removeItem('skillforge-token');
+            localStorage.removeItem('edvancea-token');
           }
         } catch (error) {
           console.error("Failed to fetch user", error);
-          localStorage.removeItem('skillforge-token');
+          localStorage.removeItem('edvancea-token');
         }
       }
       setIsLoading(false);
@@ -55,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // On success, save token and user
-      localStorage.setItem('skillforge-token', data.token);
+      localStorage.setItem('edvancea-token', data.token);
       setUser({ _id: data._id, username: data.username, email: data.email });
       return { success: true };
 
@@ -78,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
      try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -90,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // On success, save token and user
-      localStorage.setItem('skillforge-token', data.token);
+      localStorage.setItem('edvancea-token', data.token);
       setUser({ _id: data._id, username: data.username, email: data.email });
       return { success: true };
 
@@ -101,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('skillforge-token');
+    localStorage.removeItem('edvancea-token');
     // On logout, we simply reload the page.
     // This is the easiest way to clear all state from all hooks (progress, bookmarks, etc.)
     window.location.href = '/';

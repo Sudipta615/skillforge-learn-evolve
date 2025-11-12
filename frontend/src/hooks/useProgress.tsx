@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
+import { API_URL } from "../config"; // Import the config
 
 interface Progress {
   [topicId: string]: boolean;
 }
 
 // Helper function to get the token
-const getToken = () => localStorage.getItem('skillforge-token');
+const getToken = () => localStorage.getItem('edvancea-token');
 
 export const useProgress = () => {
   const [progress, setProgress] = useState<Progress>({});
@@ -18,7 +19,7 @@ export const useProgress = () => {
       if (isAuthenticated) {
         try {
           const token = getToken();
-          const res = await fetch('/api/user/progress', {
+          const res = await fetch(`${API_URL}/user/progress`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {

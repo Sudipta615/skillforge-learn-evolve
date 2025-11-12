@@ -15,7 +15,7 @@ const Hero = () => {
           </div>
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl animate-fade-in-up">
             Master New Skills with
-            <span className="gradient-text"> SkillForge</span>
+            <span className="gradient-text"> Edvancea</span>
           </h1>
           <p className="mb-8 text-lg text-muted-foreground sm:text-xl animate-fade-in-up [animation-delay:0.1s]">
             Your personalized learning platform for Excel, Finance, PowerPoint, and Video Editing.

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
+import { API_URL } from "../config"; // Import the config
 
 interface QuizProgressData {
   completed: boolean;
@@ -13,7 +14,7 @@ interface QuizProgress {
 }
 
 // Helper function to get the token
-const getToken = () => localStorage.getItem('skillforge-token');
+const getToken = () => localStorage.getItem('edvancea-token');
 
 export const useQuizProgress = () => {
   const [quizProgress, setQuizProgress] = useState<QuizProgress>({});
@@ -25,7 +26,7 @@ export const useQuizProgress = () => {
       if (isAuthenticated) {
         try {
           const token = getToken();
-          const res = await fetch('/api/user/quizzes', {
+          const res = await fetch(`${API_URL}/user/quizzes`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
