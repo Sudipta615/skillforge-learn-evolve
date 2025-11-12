@@ -26,13 +26,10 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+// Start Server (Always run this, regardless of environment)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-// Export for Vercel serverless
 export default app;
